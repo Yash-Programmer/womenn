@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom right, #f9f9f9, #e3e3e3);
+            font-family: 'Roboto', sans-serif;
+        }
+        .chat-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            width: 80vh; /* Width based on height for square shape */
+            height: 80vh; /* Set height to maintain a square shape */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box; /* Ensure padding doesn't affect overall size */
+        }
+        .chat-header {
+            text-align: center;
+            padding: 10px;
+            font-size: 2em; /* Larger header */
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        .message {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word; /* Allow long words to wrap */
+        }
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #e2e2e2;
+            color: #333;
+            align-self: flex-start;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            width: calc(100% - 120px); /* Adjust width for input */
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+        }
+        input[type="submit"] {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100px; /* Set a fixed width for the button */
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chatbot</div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be displayed here -->
+        </div>
+        <form action="/chatbot-answer" method="GET" onsubmit="return handleSubmit(event)">
+            <input type="text" name="userInput" id="userInput" placeholder="Type your message..." required>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            const userInput = document.getElementById('userInput').value;
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Create a new user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.textContent = userInput;
+            chatMessages.appendChild(userMessage);
+    
+            // Clear the input field
+            document.getElementById('userInput').value = '';
+    
+            // Simulate a bot response after a short delay
+            setTimeout(() => {
+                fetch(`/chatbot-answer?userInput=${encodeURIComponent(userInput)}`)
+                    .then(response => response.text())
+                    .then(botResponse => {
+                        const botMessage = document.createElement('div');
+                        botMessage.className = 'message bot-message';
+                        botMessage.textContent = botResponse;
+                        chatMessages.appendChild(botMessage);
+                        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+                    });
+            }, 500);
+        }
+    </script>
+</body>
+</html>
