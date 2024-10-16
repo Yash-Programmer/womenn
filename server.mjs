@@ -3,9 +3,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import fs from 'fs';  // Import File System module
 
 // Create the Express app
 const app = express();
+app.use(express.json()); // Enable JSON body parsing
 
 // Get the directory name from the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -53,7 +55,7 @@ app.get('/chatbot-answer', async (req, res) => {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         
         // Generate a response based on user input
-        const result = await model.generateContent(userInput);
+        const result = await model.generateContent("I am a women in India, " + userInput);
         const response = await result.response;
         const text = await response.text(); // Make sure to await this
         console.log(text);
@@ -66,6 +68,45 @@ app.get('/chatbot-answer', async (req, res) => {
         res.status(500).send("Error generating response. Please try again.");
     }
 });
+
+// Route for saving notes
+app.post('/save-note', (req, res) => {
+    const newNote = req.body; // Get the new note from the request body
+
+    // Read the existing notes from the JSON file
+    fs.readFile('notes.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading notes file:', err);
+            return res.status(500).send('Error saving note.');
+        }
+
+        const notes = JSON.parse(data || '[]'); // Parse existing notes or initialize an empty array
+        notes.push(newNote); // Add the new note to the notes array
+
+        // Write the updated notes back to the JSON file
+        fs.writeFile('notes.json', JSON.stringify(notes, null, 2), (err) => {
+            if (err) {
+                console.error('Error writing to notes file:', err);
+                return res.status(500).send('Error saving note.');
+            }
+            res.status(200).send('Note saved successfully!');
+        });
+    });
+});
+
+// Route to fetch existing notes
+app.get('/notes', (req, res) => {
+    fs.readFile('notes.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading notes file:', err);
+            return res.status(500).send('Error fetching notes.');
+        }
+        const notes = JSON.parse(data || '[]'); // Parse existing notes or initialize an empty array
+        res.json(notes); // Send the notes as a JSON response
+    });
+});
+
+
 
 // Start the server on port 3000
 const PORT = process.env.PORT || 3000;
