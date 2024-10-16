@@ -107,7 +107,7 @@
             // Create a new user message
             const userMessage = document.createElement('div');
             userMessage.className = 'message user-message';
-            userMessage.textContent = userInput;
+            userMessage.textContent = userInput; // User input is safe to use as textContent
             chatMessages.appendChild(userMessage);
     
             // Clear the input field
@@ -120,7 +120,7 @@
                     .then(botResponse => {
                         const botMessage = document.createElement('div');
                         botMessage.className = 'message bot-message';
-                        botMessage.textContent = botResponse;
+                        botMessage.innerHTML = botResponse; // Use innerHTML to render HTML content
                         chatMessages.appendChild(botMessage);
                         chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
                     });
