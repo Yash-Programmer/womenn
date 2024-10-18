@@ -28,20 +28,28 @@ function parseMarkdownToHTML(text) {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Handle requests to the root URL
-app.get('/', (req, res) => {
+app.get('/', (req, res) => {//
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/policies', (req, res) => {
+app.get('/policies', (req, res) => {//
     res.sendFile(path.join(__dirname, 'public', 'policies.html'));
 });
 
-app.get('/awareness', (req, res) => {
+app.get('/awareness', (req, res) => {//
     res.sendFile(path.join(__dirname, 'public', 'awareness.html'));
 });
 
+app.get('/defense', (req, res) => {//
+    res.sendFile(path.join(__dirname, 'public', 'self-defense.html'));
+});
+
+app.get('/services', (req, res) => {//
+    res.sendFile(path.join(__dirname, 'public', 'apps&services.html'));
+});
+
 // New route for the chatbot solution
-app.get('/solution', (req, res) => {
+app.get('/solution', (req, res) => {//
     res.sendFile(path.join(__dirname, 'public', 'chatbot.html')); // Ensure this points to your HTML file
 });
 
